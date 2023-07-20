@@ -7,4 +7,5 @@ myenv
 words.pkl
 classes.pkl
 chatbotmodel.h5
+__pycache__
 

@@ -5,8 +5,8 @@ import numpy as np
 import tensorflow as tf
 import os
 import nltk
+from flask import Flask, request, jsonify
 from nltk.stem import WordNetLemmatizer
-
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 intents_file_path = os.path.join(current_dir, 'intents.json')
@@ -59,7 +59,7 @@ def predict_class(sentence):
 
 
 # For chatting with Chatbot
-def get_repsonse(intents_list, intent_json):
+def get_response(intents_list, intent_json):
     tag = intents_list[0]['intent']
     list_of_intents = intent_json['intents']
 
@@ -70,10 +70,35 @@ def get_repsonse(intents_list, intent_json):
     return result
 
 
-print('Chatbot is ready to talk:\n')
+# Defining the Flask app
+app = Flask(__name__)
 
-while True:
-    message = input("")
-    ints = predict_class(message)
-    res = get_repsonse(ints, intents)
-    print(res)
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route('/api/chatbot', methods=['POST'])
+def chatbot():
+    # Content-Type header must be application/json otherwise error occurs
+    if request.headers['Content-Type'] == 'application/json':
+        try:
+            # Get the JSON data from the request body
+            data = request.get_json()
+            msg = data['msg']
+
+            # Perform prediction and get the response
+            ints = predict_class(msg)
+            res = get_response(ints, intents)
+
+            return jsonify({'response': res})  # Return the response as JSON
+
+        except Exception as e:
+            return jsonify({'error': 'Invalid request data'}), 400
+    else:
+        return jsonify({'error': 'Invalid Content-Type'}), 400
+
+
+if __name__ == '__main__':
+    app.run(port=5000)
