@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        /* CSS styles for the chatbot interface */
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #chat-area {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #user-input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        #send-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chatbot</h1>
+        <div id="chat-area"></div>
+        <input type="text" id="user-input" placeholder="Type your message..." autofocus />
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script>
+        // JavaScript code for handling chatbot interaction
+        const chatArea = document.getElementById('chat-area');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-btn');
+
+        // Event listener for send button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Event listener for Enter key press in the user input field
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Function to send user's message and receive chatbot's response
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message !== '') {
+                addUserMessage(message);
+                userInput.value = '';
+
+                // Send the message to the Flask API endpoint
+                fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `message=${encodeURIComponent(message)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const response = data.response;
+                    addChatbotMessage(response);
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
+            }
+        }
+
+        // Function to add user's message to the chat area
+        function addUserMessage(message) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = 'You: ' + message;
+            chatArea.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        // Function to add chatbot's message to the chat area
+        function addChatbotMessage(message) {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = 'Chatbot: ' + message;
+            chatArea.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        // Function to scroll to the bottom of the chat area
+        function scrollToBottom() {
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+    </script>
+</body>
+</html>
