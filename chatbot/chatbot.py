@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 import os
 import nltk
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from nltk.stem import WordNetLemmatizer
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -62,33 +62,33 @@ def predict_class(sentence):
 def get_response(intents_list, intent_json):
     tag = intents_list[0]['intent']
     list_of_intents = intent_json['intents']
-
     for i in list_of_intents:
         if i['tag'] == tag:
             result = random.choice(i['responses'])
             break
+    else:
+        result = "Sorry, I didn't quite understand that."
     return result
 
 
 # Defining the Flask app
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../templates')
 
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    dir_temp = "index.html"
+    return render_template(dir_temp)
 
 
-@app.route('/api/chatbot', methods=['POST'])
+@app.route("/api/chatbot", methods=['POST'])
 def chatbot():
     # Content-Type header must be application/json otherwise error occurs
     if request.headers['Content-Type'] == 'application/json':
         try:
-            # Get the JSON data from the request body
+            # Get the JSON data and predict
             data = request.get_json()
             msg = data['msg']
-
-            # Perform prediction and get the response
             ints = predict_class(msg)
             res = get_response(ints, intents)
 
@@ -101,4 +101,4 @@ def chatbot():
 
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(debug=True)
