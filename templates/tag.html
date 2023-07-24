@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: #dddddd;
+      border-radius: 4px;
+      margin-right: 4px;
+    }
+
+    .add-task-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      /* Set the desired width for the issue input box here */
+      width: 400px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    tbody tr:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Issue List</h1>
+        <div class="input-group">
+            <form action="" method="post" name="issue">
+                {{ form.csrf_token }}
+                <input type="text" name="issue" placeholder="Enter an issue...">
+                <button type="submit" class="add-task-btn">Add</button>
+            </form>
+        </div>
+<table>
+    <thead>
+        <tr>
+            <th>Issue</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody id="issueList">
+        {% for issue in issues_list %}
+        <tr>
+            <td>{{ issue }}</td>
+            <td><!-- Display tags or any other relevant information here --></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+</body>
+
+</html>
