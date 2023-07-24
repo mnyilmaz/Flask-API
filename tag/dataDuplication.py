@@ -20,7 +20,7 @@ with open('adim10.csv', 'r', newline='', encoding='utf-8') as csv_file:
     headers = reader.fieldnames
 
     # İlk verileri yazdır
-    with open('adim11.csv', 'w', newline='', encoding='utf-8') as out_file:
+    with open('step11.csv', 'w', newline='', encoding='utf-8') as out_file:
         writer = csv.DictWriter(out_file, fieldnames=headers)
         writer.writeheader()
         for row in reader:
@@ -50,7 +50,7 @@ with open('adim10.csv', 'r', newline='', encoding='utf-8') as csv_file:
         random.shuffle(duplicated_rows)
 
         # Rastgele karıştırılmış satırları dosyaya yazdır
-        with open('adim11.csv', 'a', newline='', encoding='utf-8') as csv_file:
+        with open('step11.csv', 'a', newline='', encoding='utf-8') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=headers)
             for row in duplicated_rows:
                 for header in headers:

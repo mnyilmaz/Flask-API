@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: #dddddd;
+      border-radius: 4px;
+      margin-right: 4px;
+    }
+
+    .add-task-btn {
+      margin-top: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Issue List</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Issue</th>
+        <th>Tags</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="issueList">
+      <!-- Issue rows will be dynamically added here -->
+    </tbody>
+  </table>
+  <button class="add-task-btn" onclick="addNewIssue()">Add a New Issue</button>
+
+  <script>
+    function addNewIssue() {
+      const issueList = document.getElementById("issueList");
+      const newRow = document.createElement("tr");
+
+      const issueName = prompt("Enter the issue name:");
+      if (!issueName) return; // Do nothing if the user cancels the prompt
+
+      const tags = prompt("Select tags (comma-separated):");
+      if (!tags) return; // Do nothing if the user cancels the prompt
+
+      const tagArray = tags.split(",").map(tag => tag.trim());
+
+      newRow.innerHTML = `
+        <td>${issueName}</td>
+        <td>${tagArray.map(tag => `<span class="tag">${tag}</span>`).join("")}</td>
+        <td><button onclick="deleteIssue(this)">Delete</button></td>
+      `;
+
+      issueList.appendChild(newRow);
+    }
+
+    function deleteIssue(button) {
+      const row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  </script>
+</body>
+
+</html>

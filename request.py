@@ -1,7 +1,7 @@
 import requests
 
 # Replace 'your_message' with the actual message you want to send to the chatbot
-msg = "Hi"
+msg = "Bye"
 
 # Set the headers to specify that the data is in JSON format
 headers = {
