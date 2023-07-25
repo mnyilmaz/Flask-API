@@ -81,28 +81,28 @@
         <h1>Issue List</h1>
         <div class="input-group">
             <form action="" method="post" name="issue">
-                {{ form.csrf_token }}
+                <!-- Include the CSRF token explicitly -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="text" name="issue" placeholder="Enter an issue...">
                 <button type="submit" class="add-task-btn">Add</button>
             </form>
         </div>
-<table>
-    <thead>
-        <tr>
-            <th>Issue</th>
-            <th>Tags</th>
-        </tr>
-    </thead>
-    <tbody id="issueList">
-        {% for issue in issues_list %}
-        <tr>
-            <td>{{ issue }}</td>
-            <td><!-- Display tags or any other relevant information here --></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+        <table>
+            <thead>
+                <tr>
+                    <th>Issue</th>
+                    <th>Tags</th>
+                </tr>
+            </thead>
+            <tbody id="issueList">
+                {% for issue, tag in issues_list %}
+                <tr>
+                    <td>{{ issue }}</td>
+                    <td>{{ tag }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 

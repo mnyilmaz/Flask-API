@@ -82,14 +82,14 @@ def predict_category(text):
     return predicted_class
 
 
-new_text = "User login error - Test User"
-predicted_category = predict_category(new_text)
-print("Predicted category:", predicted_category)
-if predict_category == 0:
-    print('Report a BUG')
-elif predict_category == 1:
-    print('Suggest a new future')
-elif predict_category == 2:
-    print('Suggest Improvement')
-else:
-    print('Technical Support')
+# new_text = "User login error - Test User"
+# predicted_category = predict_category(new_text)
+# print("Predicted category:", predicted_category)
+# if predict_category == 0:
+#     print('Report a BUG')
+# elif predict_category == 1:
+#     print('Suggest a new future')
+# elif predict_category == 2:
+#     print('Suggest Improvement')
+# else:
+#     print('Technical Support')

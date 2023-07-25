@@ -81,7 +81,7 @@ def home():
     return render_template(dir_temp)
 
 
-@app.route("/api/chatbot", methods=['POST'])
+@app.route("/index.html", methods=['POST'])
 def chatbot():
     # Content-Type header must be application/json otherwise error occurs
     if request.headers['Content-Type'] == 'application/json':
@@ -98,6 +98,7 @@ def chatbot():
             return jsonify({'error': 'Invalid request data'}), 400
     else:
         return jsonify({'error': 'Invalid Content-Type'}), 400
+    return render_template(dir_temp)
 
 
 if __name__ == '__main__':
