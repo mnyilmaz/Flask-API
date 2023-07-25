@@ -10,5 +10,6 @@ chatbotmodel.h5
 __pycache__
 i.png
 msg.png
-
+label_encoder.pkl
+trained_model.h5
 

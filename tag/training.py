@@ -4,24 +4,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 from tensorflow.keras.utils import to_categorical
+import joblib
 
 data = pd.read_csv('step11.csv', encoding='iso-8859-9')
-
-X = data['Description']
-y = data['Values']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Add 'title' column
-title = data['Title']
-X_train_title, X_test_title, y_train_title, y_test_title = train_test_split(title, y, test_size=0.2, random_state=42)
-
-# Related to X_train and X_test datas, add 'title' column
-X_train = X_train.str.cat(X_train_title, sep=' Title: ')
-X_test = X_test.str.cat(X_test_title, sep=' Title: ')
 
 X_description = data['Description']
 X_title = data['Title']
@@ -73,23 +61,8 @@ model.fit(
 score, accuracy = model.evaluate(X_test_padded, y_test_one_hot, batch_size=batch_size, verbose=1)
 print("Test point: {:.4f}, accuracy: {:.4f}".format(score, accuracy))
 
+# Save the trained model to disk
+model.save('trained_model.h5')
 
-def predict_category(text):
-    text_seq = tokenizer.texts_to_sequences([text])
-    text_padded = pad_sequences(text_seq, maxlen=max_seq_length)
-    prediction = model.predict(text_padded)
-    predicted_class = le.inverse_transform([np.argmax(prediction)])[0]
-    return predicted_class
-
-
-# new_text = "User login error - Test User"
-# predicted_category = predict_category(new_text)
-# print("Predicted category:", predicted_category)
-# if predict_category == 0:
-#     print('Report a BUG')
-# elif predict_category == 1:
-#     print('Suggest a new future')
-# elif predict_category == 2:
-#     print('Suggest Improvement')
-# else:
-#     print('Technical Support')
+# Save the LabelEncoder to disk
+joblib.dump(le, 'label_encoder.pkl')
