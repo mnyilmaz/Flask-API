@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://cdn-icons-png.flaticon.com/512/1878/1878350.png">
+<img src="https://cdn-icons-png.flaticon.com/512/1878/1878350.png" width=300 height=300>
   
 </div>
 
