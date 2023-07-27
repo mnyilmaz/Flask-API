@@ -73,7 +73,7 @@ def predict_category(text, tokenizer, le, max_seq_length):
 
 def reportBug(issue):
     msg = Message(f"About your issue: '{issue}';",
-                  recipients=['batib22024@kkoup.com'])
+                  recipients=['temp@mail.com'])
     msg.body = "Dear user; \n\n Related to your issue 'Report a BUG' tag has attained."
     mail.send(msg)
     return 'Sent'
@@ -81,7 +81,7 @@ def reportBug(issue):
 
 def suggestFeature(issue):
     msg = Message(f"About your issue: '{issue}';",
-                  recipients=['batib22024@kkoup.com'])
+                  recipients=['temp@mail.com'])
     msg.body = "Dear user; \n\n Related to your issue 'Suggest a new future' tag has attained."
     mail.send(msg)
     return 'Sent'
@@ -89,7 +89,7 @@ def suggestFeature(issue):
 
 def suggestImprovement(issue):
     msg = Message(f"About your issue: '{issue}';",
-                  recipients=['batib22024@kkoup.com'])
+                  recipients=['temp@mail.com'])
     msg.body = "Dear user; \n\n Related to your issue 'Suggest improvement' tag has attained."
     mail.send(msg)
     return 'Sent'
@@ -97,7 +97,7 @@ def suggestImprovement(issue):
 
 def technicalSupport(issue):
     msg = Message(f"About your issue: '{issue}';",
-                  recipients=['batib22024@kkoup.com'])
+                  recipients=['temp@mail.com'])
     msg.body = "Dear user; \n\n Related to your issue 'Technical support' tag has attained."
     mail.send(msg)
     return 'Sent'
