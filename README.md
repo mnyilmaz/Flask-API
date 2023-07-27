@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://banner2.cleanpng.com/20180821/px/kisspng-application-programming-interface-logo-image-compu-i-can-develop-back-end-rest-api-for-your-service-f-5b7c8fe20af486.3712986915348899540449.jpg">
+<img src="https://cdn-icons-png.flaticon.com/512/1878/1878350.png">
   
 </div>
 
