@@ -1,13 +1,13 @@
+import joblib
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.models import Sequential, load_model
-from tensorflow.keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 from tensorflow.keras.utils import to_categorical
-import joblib
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 
 data = pd.read_csv('step11.csv', encoding='iso-8859-9')
 
