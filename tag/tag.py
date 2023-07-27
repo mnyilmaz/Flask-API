@@ -2,6 +2,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from wtforms import StringField
+from flask_mail import Mail, Message
 from wtforms.csrf.session import SessionCSRF
 from flask_wtf import CSRFProtect, FlaskForm
 from sklearn.preprocessing import LabelEncoder
@@ -10,7 +11,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.text import Tokenizer
 from flask import Flask, request, render_template, redirect
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from flask_mail import Mail, Message
+
 
 # Initializing the Flask app and template folder
 app = Flask(__name__, template_folder='../templates')
