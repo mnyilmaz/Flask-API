@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://img.lovepik.com/element/45015/7435.png_300.png" width="300" height="300">
+<img src="https://w7.pngwing.com/pngs/1020/679/png-transparent-application-programming-interface-computer-icons-api-management-world-wide-web-text-rectangle-logo.png">
   
 </div>
 
