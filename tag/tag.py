@@ -10,6 +10,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.text import Tokenizer
 from flask import Flask, request, render_template, redirect
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from flask_mail import Mail, Message
 
 # Initializing the Flask app and template folder
 app = Flask(__name__, template_folder='../templates')
@@ -18,6 +19,22 @@ dir_temp_tag = 'tag.html'
 
 # Set a secret key for CSRF Token implementation, otherwise it might raise an error
 app.config['SECRET_KEY'] = 'secret_key'
+
+# Mail configuration
+app.config['DEBUG'] = True
+app.config['TESTING'] = False
+app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'  # Outlook: smtp-mail.outlook.com | Gmail: smtp.gmail | Hushmail: smtp.hushmail.com
+app.config['MAIL_PORT'] = 587  # Outlook port: 587 or 993 | Gmail port: 465 | Hushmail port: 587 | Temp mail port: 25
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'example@outlook.com'  # This is a temp mail and default value is None
+app.config['MAIL_PASSWORD'] = '****'  # Default value is None
+app.config['MAIL_DEFAULT_SENDER'] = ('... from ...', 'example@outlook.com')
+app.config['MAIL_MAX_EMAILS'] = None
+# app.config['MAIL_SUPPRESS_SEND'] = False
+app.config['MAIL_ASCII_ATTACHMENTS'] = False
+
+mail = Mail(app)
 
 # Initialize CSRF protection but usage is not necessary
 csrf = CSRFProtect(app)
@@ -53,6 +70,38 @@ def predict_category(text, tokenizer, le, max_seq_length):
     return predicted_class
 
 
+def reportBug(issue):
+    msg = Message(f"About your issue: '{issue}';",
+                  recipients=['batib22024@kkoup.com'])
+    msg.body = "Dear user; \n\n Related to your issue 'Report a BUG' tag has attained."
+    mail.send(msg)
+    return 'Sent'
+
+
+def suggestFeature(issue):
+    msg = Message(f"About your issue: '{issue}';",
+                  recipients=['batib22024@kkoup.com'])
+    msg.body = "Dear user; \n\n Related to your issue 'Suggest a new future' tag has attained."
+    mail.send(msg)
+    return 'Sent'
+
+
+def suggestImprovement(issue):
+    msg = Message(f"About your issue: '{issue}';",
+                  recipients=['batib22024@kkoup.com'])
+    msg.body = "Dear user; \n\n Related to your issue 'Suggest improvement' tag has attained."
+    mail.send(msg)
+    return 'Sent'
+
+
+def technicalSupport(issue):
+    msg = Message(f"About your issue: '{issue}';",
+                  recipients=['batib22024@kkoup.com'])
+    msg.body = "Dear user; \n\n Related to your issue 'Technical support' tag has attained."
+    mail.send(msg)
+    return 'Sent'
+
+
 # Home route
 @app.route("/")
 def home():
@@ -72,12 +121,16 @@ def tag():
         print("Predicted category:", predicted_category)
         if predicted_category == 0:
             tag_text = 'Report a BUG'
+            reportBug(issue_text)
         elif predicted_category == 1:
             tag_text = 'Suggest a new future'
+            suggestFeature(issue_text)
         elif predicted_category == 2:
-            tag_text = 'Suggest Improvement'
+            tag_text = 'Suggest improvement'
+            suggestImprovement(issue_text)
         else:
-            tag_text = 'Technical Support'
+            tag_text = 'Technical support'
+            technicalSupport(issue_text)
         # Store the issue and tag as a tuple in issues_list
         issues_list.append((issue_text, tag_text))
 
