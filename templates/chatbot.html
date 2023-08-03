@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Interface</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .chat-container {
+      max-width: 400px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    .chat-box {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+    }
+
+    .user-message {
+      background-color: #f1f0f0;
+      padding: 5px 10px;
+      border-radius: 10px;
+      margin: 5px 0;
+    }
+
+    .bot-message {
+      background-color: #edf5e1;
+      padding: 5px 10px;
+      border-radius: 10px;
+      margin: 5px 0;
+    }
+
+    .input-container {
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .input-box {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 5px;
+    }
+
+    .send-button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      <div class="bot-message">Hello! How can I assist you today?</div>
+    </div>
+    <div class="input-container">
+      <input type="text" class="input-box" id="userInput" placeholder="Type your message...">
+      <button class="send-button" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function appendUserMessage(message) {
+      const chatBox = document.getElementById('chatBox');
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.classList.add('user-message');
+      userMessageDiv.textContent = message;
+      chatBox.appendChild(userMessageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function appendBotMessage(message) {
+      const chatBox = document.getElementById('chatBox');
+      const botMessageDiv = document.createElement('div');
+      botMessageDiv.classList.add('bot-message');
+      botMessageDiv.textContent = message;
+      chatBox.appendChild(botMessageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const userInput = document.getElementById('userInput');
+      const userMessage = userInput.value.trim();
+      if (userMessage !== '') {
+        appendUserMessage(userMessage);
+        // Replace the following line with your chatbot logic to generate bot response
+        const botResponse = "I'm just a basic chatbot. I don't have real AI capabilities yet.";
+        appendBotMessage(botResponse);
+        userInput.value = '';
+      }
+    }
+
+    // Press Enter key to send message
+    document.getElementById('userInput').addEventListener('keyup', function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.querySelector('.send-button').click();
+      }
+    });
+  </script>
+</body>
+
+</html>
