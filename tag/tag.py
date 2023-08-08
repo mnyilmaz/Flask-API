@@ -44,7 +44,7 @@ le = joblib.load('label_encoder.pkl')
 
 def send_mail_to_user(issue, tag):
     msg = Message(f"About your issue: '{issue}';",
-                  recipients=['veric22319@inkiny.com'])
+                  recipients=['temp@mail.com'])
     msg.body = f"Dear user; \n\n Related to your issue {tag} tag has attained."
     mail.send(msg)
     print(msg.body)
