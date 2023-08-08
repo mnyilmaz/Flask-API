@@ -1,23 +1,17 @@
-import numpy as np
-import pandas as pd
-import joblib, requests
+import requests
 from flask_mail import Mail, Message
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, jsonify
+from text_tag_classification import new_prediction
 
 
 # Initializing the Flask app and template folder
 app = Flask(__name__, template_folder='../templates')
-dir_temp_home = 'home.html'
-dir_temp_tag = 'tag.html'
 
 # Set a secret key for CSRF Token implementation, otherwise it might raise an error
 app.config['SECRET_KEY'] = 'secret_key'
 
 # Mail configuration
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False  # To suppress flask_mail console output turn into 'True'
 app.config['TESTING'] = False
 app.config['MAIL_SERVER'] = 'smtp-mail.outlook.com'  # Outlook: smtp-mail.outlook.com | Gmail: smtp.gmail | Hushmail: smtp.hushmail.com
 app.config['MAIL_PORT'] = 587  # Outlook port: 587 or 993 | Gmail port: 465 | Hushmail port: 587 | Temp mail port: 25
@@ -32,31 +26,14 @@ app.config['MAIL_ASCII_ATTACHMENTS'] = False
 
 mail = Mail(app)
 
-# Load the trained model from disk for inference
-model = load_model('trained_model.h5')
 
-# Tokenizer and other necessary variables
-max_features = 2000
-max_seq_length = 100
-tokenizer = Tokenizer(num_words=max_features, split=' ')
-le = joblib.load('label_encoder.pkl')
-
-
-def send_mail_to_user(issue, tag):
-    msg = Message(f"About your issue: '{issue}';",
+def send_mail_to_user(title, issue, tag):
+    msg = Message(f"About your issue: '{title}';",
                   recipients=['temp@mail.com'])
-    msg.body = f"Dear user; \n\n Related to your issue {tag} tag has attained."
+    msg.body = f"Dear user; \n\n Related to your issue: \n '{issue}' \n '{tag}' tag has attained."
     mail.send(msg)
     print(msg.body)
     return 'Sent'
-
-
-def predict_category(text):
-    text_seq = tokenizer.texts_to_sequences([text])
-    text_padded = pad_sequences(text_seq, maxlen=max_seq_length)
-    prediction = model.predict(text_padded)
-    predicted_class = le.inverse_transform([np.argmax(prediction)])[0]
-    return predicted_class
 
 
 # Home route
@@ -70,27 +47,29 @@ def home():
 def tag():
     try:
         data = request.get_json()
-        description = data['description']
-        description = str(description)
+        title = data['title']
+        issue = data['issue']
+        title = str(title)
+        issue = str(issue)
 
     except Exception as e:
         return jsonify({'error': 'Invalid JSON data'}), 400
 
-    predicted_class = predict_category(description)
+    prediction = new_prediction(title, issue)
 
-    if predicted_class == 0:
+    if prediction == 0:
         tag_text = 'Report a BUG'
-        send_mail_to_user(description, tag_text)
-    elif predicted_class == 1:
-        tag_text = 'Suggest a new future'
-        send_mail_to_user(description, tag_text)
-    elif predicted_class == 2:
+        send_mail_to_user(title, issue, tag_text)
+    elif prediction == 1:
+        tag_text = 'Suggest a new feature'
+        send_mail_to_user(title, issue, tag_text)
+    elif prediction == 2:
         tag_text = 'Suggest improvement'
-        send_mail_to_user(description, tag_text)
+        send_mail_to_user(title, issue, tag_text)
     else:
         tag_text = 'Technical support'
-        send_mail_to_user(description, tag_text)
-    print(predicted_class)
+        send_mail_to_user(title, issue, tag_text)
+    print(prediction)
 
     return jsonify({'tag': tag_text})
 
