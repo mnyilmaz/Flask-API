@@ -1,16 +1,11 @@
-import joblib
 import numpy as np
 import pandas as pd
-from wtforms import StringField
+import joblib, requests
 from flask_mail import Mail, Message
-from wtforms.csrf.session import SessionCSRF
-from flask_wtf import CSRFProtect, FlaskForm
-from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.text import Tokenizer
-from flask import Flask, request, render_template, redirect
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from flask import Flask, request, render_template, redirect, jsonify
 
 
 # Initializing the Flask app and template folder
@@ -37,23 +32,8 @@ app.config['MAIL_ASCII_ATTACHMENTS'] = False
 
 mail = Mail(app)
 
-# Initialize CSRF protection but usage is not necessary
-csrf = CSRFProtect(app)
-csrf.init_app(app)
-
-
-# Normally form usage is not needed but for test environment i've added
-class IssueForm(FlaskForm):
-    issue = StringField('Issue')
-    tag = StringField('Tag')
-
-
-# List to store issues
-issues_list = []
-tags_list = []
-
 # Load the trained model from disk for inference
-loaded_model = load_model('trained_model.h5')
+model = load_model('trained_model.h5')
 
 # Tokenizer and other necessary variables
 max_features = 2000
@@ -62,84 +42,57 @@ tokenizer = Tokenizer(num_words=max_features, split=' ')
 le = joblib.load('label_encoder.pkl')
 
 
-# Normally this def was inside training.py, but in every call it was running the training over and over again
-def predict_category(text, tokenizer, le, max_seq_length):
+def send_mail_to_user(issue, tag):
+    msg = Message(f"About your issue: '{issue}';",
+                  recipients=['veric22319@inkiny.com'])
+    msg.body = f"Dear user; \n\n Related to your issue {tag} tag has attained."
+    mail.send(msg)
+    print(msg.body)
+    return 'Sent'
+
+
+def predict_category(text):
     text_seq = tokenizer.texts_to_sequences([text])
     text_padded = pad_sequences(text_seq, maxlen=max_seq_length)
-    prediction = loaded_model.predict(text_padded)
+    prediction = model.predict(text_padded)
     predicted_class = le.inverse_transform([np.argmax(prediction)])[0]
     return predicted_class
-
-
-def reportBug(issue):
-    msg = Message(f"About your issue: '{issue}';",
-                  recipients=['temp@mail.com'])
-    msg.body = "Dear user; \n\n Related to your issue 'Report a BUG' tag has attained."
-    mail.send(msg)
-    return 'Sent'
-
-
-def suggestFeature(issue):
-    msg = Message(f"About your issue: '{issue}';",
-                  recipients=['temp@mail.com'])
-    msg.body = "Dear user; \n\n Related to your issue 'Suggest a new future' tag has attained."
-    mail.send(msg)
-    return 'Sent'
-
-
-def suggestImprovement(issue):
-    msg = Message(f"About your issue: '{issue}';",
-                  recipients=['temp@mail.com'])
-    msg.body = "Dear user; \n\n Related to your issue 'Suggest improvement' tag has attained."
-    mail.send(msg)
-    return 'Sent'
-
-
-def technicalSupport(issue):
-    msg = Message(f"About your issue: '{issue}';",
-                  recipients=['temp@mail.com'])
-    msg.body = "Dear user; \n\n Related to your issue 'Technical support' tag has attained."
-    mail.send(msg)
-    return 'Sent'
 
 
 # Home route
 @app.route("/")
 def home():
-    return render_template(dir_temp_home), 200
+    return jsonify({'success': 'Home Page'}), 200
 
 
 # Main route
-@app.route('/tag.html', methods=['POST', 'GET'])
+@app.route('/tagAPI', methods=['POST', 'GET'])
 def tag():
-    form = IssueForm()
+    try:
+        data = request.get_json()
+        description = data['description']
+        description = str(description)
 
-    if request.method == 'POST' and form.validate():
-        # Get the issue text from the form and add it to the issues_list
-        issue_text = form.issue.data
-        tag_text = form.tag.data
-        predicted_category = predict_category(issue_text, tokenizer, le, max_seq_length)
-        print("Predicted category:", predicted_category)
-        if predicted_category == 0:
-            tag_text = 'Report a BUG'
-            reportBug(issue_text)
-        elif predicted_category == 1:
-            tag_text = 'Suggest a new future'
-            suggestFeature(issue_text)
-        elif predicted_category == 2:
-            tag_text = 'Suggest improvement'
-            suggestImprovement(issue_text)
-        else:
-            tag_text = 'Technical support'
-            technicalSupport(issue_text)
-        # Store the issue and tag as a tuple in issues_list
-        issues_list.append((issue_text, tag_text))
+    except Exception as e:
+        return jsonify({'error': 'Invalid JSON data'}), 400
 
-        # Redirect to the same page after handling the POST request
-        return redirect('/tag.html')
+    predicted_class = predict_category(description)
 
-    # Pass the list of issues to the template
-    return render_template(dir_temp_tag, form=form, issues_list=issues_list)
+    if predicted_class == 0:
+        tag_text = 'Report a BUG'
+        send_mail_to_user(description, tag_text)
+    elif predicted_class == 1:
+        tag_text = 'Suggest a new future'
+        send_mail_to_user(description, tag_text)
+    elif predicted_class == 2:
+        tag_text = 'Suggest improvement'
+        send_mail_to_user(description, tag_text)
+    else:
+        tag_text = 'Technical support'
+        send_mail_to_user(description, tag_text)
+    print(predicted_class)
+
+    return jsonify({'tag': tag_text})
 
 
 if __name__ == '__main__':
